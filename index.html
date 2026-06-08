@@ -1,0 +1,616 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthCare Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            width: 100%;
+            position: relative;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: transform 0.2s;
+        }
+
+        .edit-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .edit-btn:hover, .delete-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .remark-text {
+            max-width: 320px;
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+            white-space: pre-line;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">AI is analyzing patient data and generating health prediction...</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-heartbeat"></i> HealthCare Management System</h1>
+            <p>AI-Powered Health Risk Prediction Platform</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2><i class="fas fa-user-plus"></i> Add New Patient</h2>
+                <div id="alert" class="alert"></div>
+                <form id="patientForm">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth *</label>
+                        <input type="date" id="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Glucose (mg/dL) *</label>
+                        <input type="number" step="0.1" id="glucose" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Haemoglobin (g/dL) *</label>
+                        <input type="number" step="0.1" id="haemoglobin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cholesterol (mg/dL) *</label>
+                        <input type="number" step="0.1" id="cholesterol" required>
+                    </div>
+                    <button type="submit" class="btn" id="submitBtn">
+                        <i class="fas fa-save"></i> Save Patient & Generate Prediction
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-list"></i> Patient Records</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search by name or email...">
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>DOB</th>
+                                <th>Email</th>
+                                <th>Glucose</th>
+                                <th>Hb</th>
+                                <th>Chol</th>
+                                <th style="min-width: 300px;">AI Prediction</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientsTableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center;">Loading patients...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px;">Edit Patient Record</h2>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="editFullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="editDob" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Glucose (mg/dL)</label>
+                    <input type="number" step="0.1" id="editGlucose" required>
+                </div>
+                <div class="form-group">
+                    <label>Haemoglobin (g/dL)</label>
+                    <input type="number" step="0.1" id="editHaemoglobin" required>
+                </div>
+                <div class="form-group">
+                    <label>Cholesterol (mg/dL)</label>
+                    <input type="number" step="0.1" id="editCholesterol" required>
+                </div>
+                <button type="submit" class="btn">Update Patient</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let patients = [];
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 4000);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                patients = await response.json();
+                renderPatientsTable();
+            } catch (error) {
+                console.error('Error loading patients:', error);
+            }
+        }
+
+        function formatRemarks(remarks) {
+            if (!remarks) return 'No prediction available';
+            return remarks.replace(/\n/g, '<br>');
+        }
+
+        function renderPatientsTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = patients.filter(patient => 
+                patient.full_name.toLowerCase().includes(searchTerm) || 
+                patient.email.toLowerCase().includes(searchTerm)
+            );
+            
+            const tbody = document.getElementById('patientsTableBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No patients found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(patient => `
+                <tr>
+                    <td><strong>${escapeHtml(patient.full_name)}</strong></td>
+                    <td>${patient.date_of_birth}</td>
+                    <td>${escapeHtml(patient.email)}</td>
+                    <td>${patient.glucose}</td>
+                    <td>${patient.haemoglobin}</td>
+                    <td>${patient.cholesterol}</td>
+                    <td class="remark-text">${formatRemarks(patient.remarks)}</td>
+                    <td class="action-buttons">
+                        <button class="edit-btn" onclick="editPatient(${patient.id})"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="delete-btn" onclick="deletePatient(${patient.id})"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderPatientsTable);
+
+        document.getElementById('patientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> AI is predicting...';
+            showLoading();
+            
+            const patientData = {
+                full_name: document.getElementById('fullName').value,
+                date_of_birth: document.getElementById('dob').value,
+                email: document.getElementById('email').value,
+                glucose: parseFloat(document.getElementById('glucose').value),
+                haemoglobin: parseFloat(document.getElementById('haemoglobin').value),
+                cholesterol: parseFloat(document.getElementById('cholesterol').value)
+            };
+            
+            try {
+                const response = await fetch('/api/patients', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(patientData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert('✓ Patient added successfully! AI prediction generated.', 'success');
+                    document.getElementById('patientForm').reset();
+                    await loadPatients();
+                } else {
+                    showAlert('✗ ' + (result.error || 'Error adding patient'), 'error');
+                }
+            } catch (error) {
+                showAlert('✗ Network error. Please try again.', 'error');
+            } finally {
+                hideLoading();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Patient & Generate Prediction';
+            }
+        });
+
+        async function editPatient(id) {
+            const patient = patients.find(p => p.id === id);
+            if (patient) {
+                document.getElementById('editId').value = patient.id;
+                document.getElementById('editFullName').value = patient.full_name;
+                document.getElementById('editDob').value = patient.date_of_birth;
+                document.getElementById('editEmail').value = patient.email;
+                document.getElementById('editGlucose').value = patient.glucose;
+                document.getElementById('editHaemoglobin').value = patient.haemoglobin;
+                document.getElementById('editCholesterol').value = patient.cholesterol;
+                document.getElementById('editModal').style.display = 'flex';
+            }
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            showLoading();
+            
+            const id = document.getElementById('editId').value;
+            const updateData = {
+                full_name: document.getElementById('editFullName').value,
+                date_of_birth: document.getElementById('editDob').value,
+                email: document.getElementById('editEmail').value,
+                glucose: parseFloat(document.getElementById('editGlucose').value),
+                haemoglobin: parseFloat(document.getElementById('editHaemoglobin').value),
+                cholesterol: parseFloat(document.getElementById('editCholesterol').value)
+            };
+            
+            try {
+                const response = await fetch(`/api/patients/${id}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(updateData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert('✓ Patient updated successfully with new AI prediction!', 'success');
+                    closeModal();
+                    await loadPatients();
+                } else {
+                    showAlert('✗ ' + (result.error || 'Error updating patient'), 'error');
+                }
+            } catch (error) {
+                showAlert('✗ Network error. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        async function deletePatient(id) {
+            if (confirm('Are you sure you want to delete this patient record?')) {
+                showLoading();
+                try {
+                    const response = await fetch(`/api/patients/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('✓ Patient deleted successfully', 'success');
+                        await loadPatients();
+                    } else {
+                        showAlert('✗ Error deleting patient', 'error');
+                    }
+                } catch (error) {
+                    showAlert('✗ Network error. Please try again.', 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        loadPatients();
+    </script>
+</body>
+</html>
